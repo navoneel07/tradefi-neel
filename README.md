@@ -91,6 +91,58 @@ Following are the main libraries/modules used:
 - mongoose
 - nodemailer
 
+## 5. API Documentation
+
+#### Get All Slots
+
+```http
+  GET http://localhost:5000/slots/get-slots
+```
+
+| Parameter | Type     | Description   |
+| :-------- | :------- | :------------ |
+|           | `string` | Get all slots |
+
+#### Create Slot
+
+```http
+  POST http://localhost:5000/slots/create-slot
+```
+
+| Parameter | Type     | Description       |
+| :-------- | :------- | :---------------- |
+|           | `string` | Create a new slot |
+
+#### Book Slot
+
+```http
+  POST http://localhost:5000/slots/book-slot
+```
+
+| Parameter | Type     | Description |
+| :-------- | :------- | :---------- |
+|           | `string` | Book a slot |
+
+#### Get shipments
+
+```http
+  GET http://localhost:5000/shipments/get-shipments
+```
+
+| Parameter | Type     | Description       |
+| :-------- | :------- | :---------------- |
+|           | `string` | Get all shipments |
+
+#### Create new shipments
+
+```http
+  GET http://localhost:5000/shipments/create-shipment
+```
+
+| Parameter | Type     | Description           |
+| :-------- | :------- | :-------------------- |
+|           | `string` | Create a new shipment |
+
 ## 5. Recommendations
 
 - Adding authentication
