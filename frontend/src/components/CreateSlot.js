@@ -7,7 +7,10 @@ import {
   Box,
   TextField,
   Autocomplete,
+  Fab,
 } from "@mui/material";
+
+import AddIcon from "@mui/icons-material/Add";
 
 import axios from "axios";
 
@@ -43,9 +46,17 @@ const CreateSlot = (props) => {
 
   return (
     <>
-      <Button variant="contained" onClick={handleOpen}>
+      {/* <Button fullWidth variant="contained" onClick={handleOpen}>
         Add Slot
-      </Button>
+      </Button> */}
+      <Fab
+        sx={{ position: "fixed", top: "90%", zIndex: 2 }}
+        color="primary"
+        aria-label="add"
+        onClick={handleOpen}
+      >
+        <AddIcon />
+      </Fab>
       <Modal open={open} onClose={handleClose}>
         <Box
           sx={{

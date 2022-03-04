@@ -23,6 +23,7 @@ const Book = (props) => {
   const [data, setData] = useState([]);
   const [shipmentData, setShipmentData] = useState([]);
 
+  const [viewAllSlots, setViewAllSlots] = useState("Available");
   const location = useLocation();
 
   console.log(location.state);
@@ -40,9 +41,7 @@ const Book = (props) => {
       .then(
         axios.spread((...responses) => {
           const data = responses[0].data;
-          const shipmentData = responses[1].data.filter(
-            (item) => item.isAllotted === false
-          );
+          const shipmentData = responses[1].data;
           setData(data);
           setShipmentData(shipmentData);
         })
@@ -65,7 +64,20 @@ const Book = (props) => {
     }
   };
 
-  let filteredData = data.filter((item) => item.isAvailable === true);
+  let filteredData = data;
+
+  const choices = {
+    Available: true,
+    Unavailable: false,
+  };
+
+  if (viewAllSlots === "All") filteredData = data;
+  else
+    filteredData = handleFilter(
+      filteredData,
+      "isAvailable",
+      choices[viewAllSlots]
+    );
 
   if (origin) filteredData = handleFilter(filteredData, "origin", origin);
   if (destination)
@@ -83,7 +95,10 @@ const Book = (props) => {
           justifyContent="center"
           padding={3}
           rowSpacing={2}
+          paddingBottom={10}
         >
+          <CreateSlot fetchData={fetchData} />
+
           <Grid item>
             <Grid
               container
@@ -92,10 +107,27 @@ const Book = (props) => {
               //   justifyContent="center"
               columnSpacing={1}
             >
-              <Grid item sx={{ flexGrow: 1 }} xs={1}>
-                <CreateSlot fetchData={fetchData} />
+              <Grid item sx={{ flexGrow: 1 }} xs={2}>
+                <TextField
+                  style={{ width: "100%" }}
+                  variant="outlined"
+                  value={viewAllSlots}
+                  onChange={(e) => setViewAllSlots(e.target.value)}
+                  select
+                  label="View"
+                >
+                  <MenuItem key={0} value="All">
+                    All
+                  </MenuItem>
+                  <MenuItem key={1} value="Available">
+                    Available
+                  </MenuItem>
+                  <MenuItem key={2} value="Unavailable">
+                    Unavilable
+                  </MenuItem>
+                </TextField>
               </Grid>
-              <Grid item sx={{ flexGrow: 1 }} xs={3}>
+              <Grid item sx={{ flexGrow: 1 }} xs={2}>
                 <TextField
                   style={{ width: "100%" }}
                   variant="outlined"
@@ -107,12 +139,18 @@ const Book = (props) => {
                   <MenuItem key={0} value="">
                     Remove
                   </MenuItem>
-                  {filteredData.map((o) => (
-                    <MenuItem value={o.origin}>{o.origin}</MenuItem>
-                  ))}
+                  {filteredData
+                    .filter(
+                      (value, index, self) =>
+                        index ===
+                        self.findIndex((t) => t.origin === value.origin)
+                    )
+                    .map((o) => (
+                      <MenuItem value={o.origin}>{o.origin}</MenuItem>
+                    ))}
                 </TextField>
               </Grid>
-              <Grid item sx={{ flexGrow: 1 }} xs={3}>
+              <Grid item sx={{ flexGrow: 1 }} xs={2}>
                 <TextField
                   style={{ width: "100%" }}
                   variant="outlined"
@@ -124,9 +162,17 @@ const Book = (props) => {
                   <MenuItem key={0} value="">
                     Remove
                   </MenuItem>
-                  {filteredData.map((o) => (
-                    <MenuItem value={o.destination}>{o.destination}</MenuItem>
-                  ))}
+                  {filteredData
+                    .filter(
+                      (value, index, self) =>
+                        index ===
+                        self.findIndex(
+                          (t) => t.destination === value.destination
+                        )
+                    )
+                    .map((o) => (
+                      <MenuItem value={o.destination}>{o.destination}</MenuItem>
+                    ))}
                 </TextField>
               </Grid>
               <Grid item sx={{ flexGrow: 1 }} xs={3}>
@@ -141,12 +187,18 @@ const Book = (props) => {
                   <MenuItem key={0} value="">
                     Remove
                   </MenuItem>
-                  {filteredData.map((o) => (
-                    <MenuItem value={o.tradelane}>{o.tradelane}</MenuItem>
-                  ))}
+                  {filteredData
+                    .filter(
+                      (value, index, self) =>
+                        index ===
+                        self.findIndex((t) => t.tradelane === value.tradelane)
+                    )
+                    .map((o) => (
+                      <MenuItem value={o.tradelane}>{o.tradelane}</MenuItem>
+                    ))}
                 </TextField>
               </Grid>
-              <Grid item sx={{ flexGrow: 1 }} xs={2}>
+              <Grid item sx={{ flexGrow: 1 }} xs={3}>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     label="Date Available"
@@ -170,6 +222,7 @@ const Book = (props) => {
                     destination={o.destination}
                     tradelane={o.tradelane}
                     date={o.date}
+                    isAvailable={o.isAvailable}
                     shipment={shipment}
                     fetchData={fetchData}
                     setShipment={setShipment}
@@ -192,6 +245,8 @@ const Book = (props) => {
           rowSpacing={1}
         >
           <Grid item sx={{ flexGrow: 1 }}>
+            <CreateShipment fetchData={fetchData} />
+
             <Grid
               container
               direction="row"
@@ -199,10 +254,7 @@ const Book = (props) => {
               //   justifyContent="center"
               columnSpacing={2}
             >
-              <Grid item sx={{ flexGrow: 1 }} xs={2}>
-                <CreateShipment fetchData={fetchData} />
-              </Grid>
-              <Grid item xs={10}>
+              <Grid item xs={12}>
                 <TextField
                   style={{ width: "100%" }}
                   variant="outlined"

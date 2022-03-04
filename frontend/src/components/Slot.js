@@ -23,6 +23,7 @@ const Slot = (props) => {
     fetchData,
     setShipment,
     toMail,
+    isAvailable,
   } = props;
 
   const [open, setOpen] = useState(false);
@@ -39,7 +40,10 @@ const Slot = (props) => {
 
   const handleBook = () => {
     if (!shipment) {
-      alert("error", "No shipment selected.");
+      return alert("error", "No shipment selected.");
+    }
+    if (shipment.isAllotted) {
+      return alert("error", "Shipment is already allotted to a slot!");
     }
     axios
       .post("http://localhost:5000/slots/book-slot", {
@@ -71,7 +75,7 @@ const Slot = (props) => {
           <Typography sx={{ fontSize: 18 }} color="text.secondary" gutterBottom>
             Date Available : {date}
           </Typography>
-          <Button onClick={handleBook}>Book</Button>
+          {isAvailable ? <Button onClick={handleBook}>Book</Button> : <></>}
           <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
             <Alert
               severity={severity}
